@@ -1,10 +1,111 @@
-a# Pacotes -----------------------------------------------------------------
+# Pacotes -----------------------------------------------------------------
 
-library(tidyverse)
+library(dplyr)
 
 # Base de dados -----------------------------------------------------------
 
 imdb <- read_rds("dados/imdb.rds")
+
+# select ------------------------------------------------------------------
+
+# exemplo 1
+
+select(imdb, titulo, ano, orcamento)
+
+# exemplo 2 
+
+select(imdb, starts_with("ator"))
+
+# exemplo 3
+
+select(imdb, -starts_with("ator"), -titulo)
+
+# Exercício 1
+# Crie uma tabela com apenas as colunas titulo, diretor, e orcamento. Salve em um
+# objeto chamado imdb_simples.
+
+# Exercício 2
+# Remova as colunas ator_1, ator_2 e ator_3 de três formas diferentes. Salve em um
+# objeto chamado imdb_sem_ator.
+
+# arrange -----------------------------------------------------------------
+
+# exemplo 1
+
+arrange(imdb, orcamento)
+
+# exemplo 2
+
+arrange(imdb, desc(orcamento))
+
+# exemplo 3
+
+arrange(imdb, desc(ano), titulo)
+
+# exercício 1
+# Ordene os filmes em ordem crescente de ano e decrescente de lucro e salve 
+# em um objeto chamado filmes_ordenados
+
+# exemplo 4
+# NA
+
+df <- tibble(x = c(NA, 2, 1), y = c(1, 2, 3))
+arrange(df, x)
+
+# exemplo 5
+
+imdb %>% filter(ano == 2010) %>% arrange(desc(orcamento))
+
+# Exercício 2 
+# Selecione apenas as colunas título e orçamento 
+# e então ordene de forma decrescente pelo orçamento.
+
+
+
+# Pipe (%>%) --------------------------------------------------------------
+
+# g(f(x)) = x %>% f() %>% g()
+
+# Receita de bolo sem pipe. Tente entender o que é preciso fazer.
+
+esfrie(
+  asse(
+    coloque(
+      bata(
+        acrescente(
+          recipiente(
+            rep(
+              "farinha", 
+              2
+            ), 
+            "água", "fermento", "leite", "óleo"
+          ), 
+          "farinha", até = "macio"
+        ), 
+        duração = "3min"
+      ), 
+      lugar = "forma", tipo = "grande", untada = TRUE
+    ), 
+    duração = "50min"
+  ), 
+  "geladeira", "20min"
+)
+
+# Veja como o código acima pode ser reescrito utilizando-se o pipe. 
+# Agora realmente se parece com uma receita de bolo.
+
+recipiente(rep("farinha", 2), "água", "fermento", "leite", "óleo") %>%
+  acrescente("farinha", até = "macio") %>%
+  bata(duração = "3min") %>%
+  coloque(lugar = "forma", tipo = "grande", untada = TRUE) %>%
+  asse(duração = "50min") %>%
+  esfrie("geladeira", "20min")
+
+# ATALHO: CTRL + SHIFT + M
+
+# Exercício
+# Refaça o exercício 2 do arrange utilizando o %>% 
+
 
 # filter ------------------------------------------------------------------
 
@@ -19,30 +120,13 @@ filmes_bons
 filmes_bons <- filmes_bons %>% filter(orcamento < 1000000)
 filmes_bons
 
-# exemplo 4 - Relembrando as comparações com o R
-
-1 == 1
-"a" == "b"
-
-# Cuidado
-sqrt(2) ^ 2 == 2
-1 / 49 * 49 == 1
-
-near(sqrt(2) ^ 2,  2)
-near(1 / 49 * 49, 1)
-
-bons <- imdb %>% filter(nota_imdb > 9)
-
 
 # exercício 1
 # Criar uma variável chamada `filmes_baratos` com filmes com orçamento menor do 
 # que 1 milhão de dólares.
 
 
-
 # exemplo 5
-# operadores lógicos
-
 imdb %>% filter(ano > 2010 & nota_imdb > 8.5)
 imdb %>% filter(orcamento < 100000 & receita > 1000000)
 
@@ -69,6 +153,10 @@ imdb %>% filter(!receita > orcamento)
 # exercício 5
 # Criar um objeto ww com filmes do Wes Anderson ou do Woody Allen.
 
+# Exercício 6
+# Crie uma tabela apenas com filmes do Woody Allen e apenas as colunas titulo e ano,
+# ordenada por ano.
+
 # exemplo 6
 # %in%
 
@@ -78,31 +166,6 @@ pitts <- imdb %>% filter(ator_1 %in% c('Angelina Jolie Pitt', "Brad Pitt"))
 # Refaça o exercício 5 usando o %in%.
 
 # exemplo 7
-# Relembrando as operações com NA
-
-NA > 5
-
-10 == NA
-
-NA + 10
-
-NA / 2
-
-NA == NA
-
-# Seja x a idade de Maria. Não sabemos a idade de Maria:
-x <- NA
-
-# Seja y a idade de João. Não sabemos a idade de João:
-y <- NA
-
-# Maria e João têm a mesma idade?
-x == y
-#> [1] NA
-# Não sabemos.
-
-is.na(x)
-
 df <- tibble(x = c(1, NA, 3))
 filter(df, x > 1)
 filter(df, is.na(x) | x > 1)
@@ -113,6 +176,7 @@ imdb %>% filter(is.na(orcamento))
 # Identifique os filmes que não possuem informação tanto de receita quanto de orcamento
 # e salve em um objeto com nome sem_info.
 
+
 # exemplo 8
 # str_detect
 
@@ -120,67 +184,6 @@ imdb %>% filter(str_detect(generos, "Action"))
 
 # exercício 8
 # Salve em um objeto os filmes de Ação e Comédia com nota no imdb maior do que 8.
-
-
-# arrange -----------------------------------------------------------------
-
-# exemplo 1
-
-imdb %>% arrange(orcamento)
-
-# exemplo 2
-
-imdb %>% arrange(desc(orcamento))
-
-# exemplo 3
-
-imdb %>% arrange(desc(ano), titulo)
-
-# exercício 1
-# Ordene os filmes em ordem crescente de ano e decrescente de lucro e salve 
-# em um objeto chamado filmes_ordenados
-
-# exemplo 4
-# NA
-
-df <- tibble(x = c(NA, 2, 1), y = c(1, 2, 3))
-
-df %>% arrange(x)
-df %>% arrange(!is.na(x), x)
-
-# exemplo 5
-
-imdb %>% filter(ano == 2010) %>% arrange(desc(orcamento))
-
-# exercício 2 
-# Ordene por ordem decrescente do orçamento os filmes de um diretor a sua escolha.
-# Salve o resultado em um objeto chamado diretor_ordenado
-
-# select ------------------------------------------------------------------
-
-# exemplo 1
-
-imdb %>% select(titulo, ano, orcamento)
-
-# exemplo 2 
-
-imdb %>% select(starts_with("ator"))
-
-# exemplo 3
-
-imdb %>% select(-starts_with("ator"), -titulo)
-
-# exercício 1
-# Crie uma tabela com apenas as colunas titulo, diretor, e orcamento. Salve em um
-# objeto chamado imdb_simples.
-
-# exercício 2
-# Remova as colunas ator_1, ator_2 e ator_3 de três formas diferentes. Salve em um
-# objeto chamado imdb_sem_ator.
-
-# exercício 3
-# Crie uma tabela apenas com filmes do Woody Allen e as colunas titulo e ano
-# ordenada por ano.
 
 
 # mutate ------------------------------------------------------------------

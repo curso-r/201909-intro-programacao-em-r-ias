@@ -1,6 +1,7 @@
 ---
-title: "Introdução à programação em R - IAS"
-author: "Curso-R"
+title: "Introdução à programação em R"
+subtitle: "Instituto Arthon Senna"
+author: "<img src = 'https://d33wubrfki0l68.cloudfront.net/9b0699f18268059bdd2e5c21538a29eade7cbd2b/67e5c/img/logo/cursor1-5.png' width = '20%'>"
 date: ""
 output:
   xaringan::moon_reader:
@@ -47,11 +48,13 @@ class: middle, center
 ---
 ## Cronograma
 
-- Introdução à programação em R
-   - Conceitos básicos e importação
-   - Manipulação de dados
-   - Visualização de dados 
-   - Case, dashboards estáticos e outros tópicos
+- Conceitos básicos e importação
+
+- Manipulação de dados
+
+- Visualização de dados 
+
+- Case, dashboards estáticos e outros tópicos
    
 ---
 
@@ -204,14 +207,6 @@ class: middle, center
 ## O ciclo da ciência de dados com o R
 
 <img src="img/ciclo-ciencia-de-dados-pacotes.png" style = "display: block; margin-left: auto; margin-right: auto;">
-
----
-
-## Por que usar o R?
-
-<img src="img/cola.png" style = "display: block; margin-left: auto; margin-right: auto;">
-
-O R é a **cola**.
 
 ---
 class: middle, center
