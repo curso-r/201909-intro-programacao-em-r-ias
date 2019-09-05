@@ -1,5 +1,5 @@
 ---
-title: "Introdução à programação em R"
+title: "Introdução à programação em R - IAS"
 author: "Curso-R"
 date: ""
 output:
@@ -21,6 +21,13 @@ class: middle, center
 <img src="img/professores.png" style=" display: block; margin-left: auto; margin-right: auto;"></img>
 
 ---
+class: middle, center
+
+## http://bit.ly/2jZxtP6
+
+### download dos arquivos do curso
+
+---
 
 ## Curso-R
 
@@ -30,7 +37,7 @@ class: middle, center
 
 - Curso-R surge oficialmente em 2017
 
-- Mais de 20 cursos e 300 alunos
+- Mais de 50 cursos e 750 alunos
 
 ---
 class: middle, center
