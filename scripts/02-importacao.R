@@ -134,7 +134,7 @@ for(caminho in arquivos) {
 # Excel -------------------------------------------------------------------
 library(readxl)
 
-imdb_excel <- read_excel("dados/imdb.xlsx")
+imdb_excel <- read_excel("dados/imdb.xlsx", sheet = "Sheet1")
 
 # SQL ---------------------------------------------------------------------
 
