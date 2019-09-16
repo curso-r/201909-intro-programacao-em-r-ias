@@ -34,6 +34,9 @@ library(ggplot2)
 ```{r}
 imdb <- read_rds("../dados/imdb.rds")
 imdb <- imdb %>% mutate(lucro = receita - orcamento)
+
+bd_exp <- read_rds("../dados/bd_exp.rds")
+legendas <- read_rds("../dados/legendas.rds")
 ```
 
 > Pergunta: será que filmes com maior orçamento tendem a arrecadar mais?
@@ -126,7 +129,30 @@ imdb %>%
 1. Crie um gráfico de dispersão da nota do imdb pelo orçamento.
 
 ```{r}
-
+bd_exp %>%
+  ggplot(aes(x = sal_scmath_i35_1, y = sal_scmath_i38_1)) +
+  geom_jitter(alpha = 0.1) +
+  geom_smooth()
+is_not_constant <- function(x) length(unique(x)) > 1
+bd_exp_cor <- bd_exp %>% 
+  select(-sujeito, -cod_suj) %>%
+  select_if(is.numeric) %>%
+  select_if(is_not_constant) %>%
+  group_by(turma) %>%
+  correlate() %>%    # Create correlation data frame (cor_df)
+  stretch() %>%
+  arrange(desc(abs(r)))
+library(corrr)
+bd_exp %>% 
+  select(-sujeito, -cod_suj) %>%
+  select_if(is.numeric) %>%
+  group_by(turma) %>%
+  nest() %>%
+  mutate(
+    correlacao = map(data, ~ {.x %>% correlate %>% stretch %>% arrange(desc(abs(r)))})
+  ) %>%
+  select(-data) %>%
+  unnest(correlacao)
 ```
 
 2. Pinte todos os pontos do gráfico de azul.
@@ -141,6 +167,10 @@ imdb %>%
 
 ```
 
+4. [bd_exp] Crie um gráfico de dispersão entre sal_scmath_i35_1 e sal_scmath_i38_1. Experimente usar geom_jitter() no lugar de geom_point() e veja a diferença.
+```{r}
+
+```
 
 
 
@@ -311,141 +341,43 @@ imdb %>%
 Também poderíamos fazer um histograma para avaliar a distribuição.
 
 ```{r}
-imdb %>% 
-  filter(diretor == "Steven Spielberg") %>%
+bd_exp %>% 
   ggplot() +
-  geom_histogram(aes(x = lucro))
+  geom_histogram(aes(x = Idade0))
 ```
 
 Deixando mais bonito.
 
 ```{r}
-imdb %>% 
-  filter(diretor == "Steven Spielberg") %>%
+bd_exp %>% 
   ggplot() +
   geom_histogram(
-    aes(x = lucro), 
-    binwidth = 100000000,
-    color = "white"
-  )
+    aes(x = Idade0),
+    color = "white",
+    fill = "royalblue"
+  ) +
+  theme_minimal()
 ```
 
 > Exercício
 
-1. Refaça o último gráfico utilizando a agora a variável `orçamento` como resposta.
+1. Refaça o último gráfico utilizando a agora a variável `sal_cstrat_i16_1` como resposta.
 
 ```{r}
 
 ```
 
 
-2.a Selecione um gênero e visualize os diretores com mais filmes dentro desse gênero.
+2.b Estude a distribuição da variável `sal_cstrat_i16_1` para cada turma.
 
 ```{r}
 
 ```
 
 
-2.b Estude a distribuição da variável `lucro` para cada diretor.
-
-```{r}
-
-```
+# Gráfico de barras
 
 
-
-> Pergunta: qual o comportamento das notas dos filmes do Spielberg no IMDB ao longo do tempo?
-
-Vamos fazer um gráfico de linhas das notas pelo ano.
-
-```{r}
-imdb %>% 
-  filter(diretor == "Steven Spielberg") %>% 
-  ggplot() +
-  geom_line(aes(x = ano, y = nota_imdb))
-```
-
-Vamos agregar os dados para termos apenas uma medida por ano.
-
-```{r}
-imdb %>% 
-  filter(diretor == "Steven Spielberg") %>%
-  group_by(ano) %>% 
-  summarise(nota_media = mean(nota_imdb, na.rm = TRUE)) %>% 
-  ggplot() +
-  geom_line(aes(x = ano, y = nota_media))
-```
-
-Podemos misturar dois `geom's`.
-
-```{r}
-imdb %>% 
-  filter(diretor == "Steven Spielberg") %>%
-  group_by(ano) %>% 
-  summarise(nota_media = mean(nota_imdb, na.rm = TRUE)) %>% 
-  ggplot() +
-  geom_line(aes(x = ano, y = nota_media), alpha = 0.1) +
-  geom_point(aes(x = ano, y = nota_media), alpha = 0.1) +
-  geom_text(aes(x = ano, y = nota_media , label = nota_media))
-  
-```
-
-Neste caso, é útil reescreveremos o código da seguinte maneira.
-
-```{r}
-imdb %>% 
-  filter(diretor == "Steven Spielberg") %>%
-  group_by(ano) %>% 
-  summarise(nota_media = mean(nota_imdb, na.rm = TRUE)) %>% 
-  ggplot(aes(x = ano, y = nota_media)) +
-  geom_point(alpha = 0.1) +
-  geom_line(alpha = 0.1) +
-  geom_text(aes(label = nota_media))
-```
-
-
-> Exercícios
-
-Repita as análises acima, agora para os atores (vamos começar utilizando apenas a coluna `ator_1`:
-
-1. Selecione os atores com mais filmes. Visualize quem são os atores e o número de filmes que eles fizeram. Você pode ou não fazer a análise para um gênero.
-
-```{r}
-
-```
-
-
-2. Estude a distribuição do orçamento e do lucro dos filmes 
-desses atores.
-
-```{r}
-
-```
-
-
-3. Selecione um dos atores e estude a nota de seus filmes no IMDB ao longo do tempo.
-
-```{r}
-
-```
-
-
-
-E se quiséssemos utilizar as 3 colunas de atores?
-
-```{r}
-imdb_atores <- imdb %>% 
-  gather(posicao, ator, ator_1, ator_2, ator_3) %>% 
-View(imdb_atores)
-```
-
-## Exercícios
-
-Repita a análise anterior, utilizando agora todas as colunas de atores, e veja se você mudaria de opinião sobre o ator a ser escolhido.
-
-```{r}
-
-```
 
 
 # Misc de ggplot2
@@ -547,6 +479,7 @@ imdb %>%
 ```
 
 
+
 ## Exercícios
 
 1. Faça um gráfico para visualizar as 10 maiores bilheterias de 2016.
@@ -613,4 +546,91 @@ p2 <- imdb %>%
 
 p1 + p2
 ```
+
+
+## geom_line()
+
+> Pergunta: qual o comportamento das notas dos filmes do Spielberg no IMDB ao longo do tempo?
+
+Vamos fazer um gráfico de linhas das notas pelo ano.
+
+```{r}
+imdb %>% 
+  filter(diretor == "Steven Spielberg") %>% 
+  ggplot() +
+  geom_line(aes(x = ano, y = nota_imdb))
+```
+
+Vamos agregar os dados para termos apenas uma medida por ano.
+
+```{r}
+imdb %>% 
+  filter(diretor == "Steven Spielberg") %>%
+  group_by(ano) %>% 
+  summarise(nota_media = mean(nota_imdb, na.rm = TRUE)) %>% 
+  ggplot() +
+  geom_line(aes(x = ano, y = nota_media))
+```
+
+Podemos misturar dois `geom's`.
+
+```{r}
+imdb %>% 
+  filter(diretor == "Steven Spielberg") %>%
+  group_by(ano) %>% 
+  summarise(nota_media = mean(nota_imdb, na.rm = TRUE)) %>% 
+  ggplot() +
+  geom_line(aes(x = ano, y = nota_media), alpha = 0.1) +
+  geom_point(aes(x = ano, y = nota_media), alpha = 0.1) +
+  geom_text(aes(x = ano, y = nota_media , label = nota_media))
+  
+```
+
+Neste caso, é útil reescreveremos o código da seguinte maneira.
+
+```{r}
+imdb %>% 
+  filter(diretor == "Steven Spielberg") %>%
+  group_by(ano) %>% 
+  summarise(nota_media = mean(nota_imdb, na.rm = TRUE)) %>% 
+  ggplot(aes(x = ano, y = nota_media)) +
+  geom_point(alpha = 0.1) +
+  geom_line(alpha = 0.1) +
+  geom_text(aes(label = nota_media))
+```
+
+
+> Exercícios
+
+Repita as análises acima, agora para os atores (vamos começar utilizando apenas a coluna `ator_1`:
+
+1. Selecione os atores com mais filmes. Visualize quem são os atores e o número de filmes que eles fizeram. Você pode ou não fazer a análise para um gênero.
+
+```{r}
+
+```
+
+
+2. Selecione um dos atores e estude a nota de seus filmes no IMDB ao longo do tempo.
+
+```{r}
+
+```
+
+
+(ATENÇÃO! Conteúdo avançado)
+E se quiséssemos utilizar as 3 colunas de atores?
+
+```{r}
+imdb_atores <- imdb %>% 
+  gather(posicao, ator, ator_1, ator_2, ator_3) %>% 
+View(imdb_atores)
+```
+
+Repita a análise anterior, utilizando agora todas as colunas de atores, e veja se você mudaria de opinião sobre o ator a ser escolhido.
+
+```{r}
+
+```
+
 
