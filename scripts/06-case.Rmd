@@ -34,3 +34,133 @@ base_ias <- read_rds("../dados/bd_exp.rds") %>%
 
 ```
 
+### Gráfico 1: grafico_notas.png
+
+```{r}
+
+```
+
+
+### Gráfico 2: grafico_escores_dominio_O.png
+
+```{r}
+
+```
+
+
+### Gráfico 3: grafico_barras_rebuscado.png
+
+```{r}
+
+```
+
+
+# Outros exemplos: importando base
+
+```{r}
+library(readxl)
+
+base <- read_excel(
+  path = "../dados/planilha_baguncada.xls",
+  skip = 9,
+  n_max = 21965,
+  col_names = FALSE
+)
+
+anos <- base %>% 
+  magrittr::extract(1,) %>% 
+  as.numeric() %>% 
+  magrittr::extract(!is.na(.))
+
+locais <- base %>% 
+  slice(-c(1,2)) %>% 
+  filter(...2 != "Total", !str_detect(...2, "^[0-9]")) %>% 
+  select(Codigo = ...1, ciudad = ...2) %>% 
+  mutate(
+    ciudad = str_remove_all(ciudad, "[(][0-9][)]"),
+    ciudad = str_squish(ciudad)
+  )
+  
+col_names <- base %>% 
+  slice(2) %>% 
+  as.character()
+
+col_names[-c(1,2)] <- paste(
+  col_names[-c(1,2)],
+  rep(anos, rep(3, length(anos))),
+  sep = "_"
+)
+
+base_tidy <- base %>% 
+  slice(-c(1,2)) %>% 
+  mutate(codigo = ...1) %>% 
+  fill(codigo, .direction = "down") %>%
+  filter(is.na(...1)) %>%
+  select(-...1) %>% 
+  select(codigo, ...2, everything()) %>%
+  `colnames<-`(col_names) %>%
+  gather(grupo, populacao, -`Grupos de edad`, -Codigo) %>%
+  separate(grupo, into = c("grupo", "ano")) %>%
+  left_join(locais, by = "Codigo") %>%
+  select(
+    codigo = Codigo,
+    ciudad,
+    ano,
+    grupo,
+    edad = `Grupos de edad`,
+    populacao
+  )
+  
+View(base_tidy)
+
+```
+
+
+
+# Outros exemplos: grafico_senna_rebuscado.pdf
+
+Um exemplo de gráfico mais complexo (o poder do gather + ggplot2!)
+
+
+```{r}
+tabela_senna <- base_ias %>%
+  gather(variavel, resposta, starts_with("senna")) %>%
+  count(variavel, resposta) %>%
+  group_by(variavel) %>%
+  mutate(
+    p = n/sum(n),
+    p_lbl = percent(p, 0.1, decimal.mark = ","),
+    p_lbl = paste0(n, " (", p_lbl, ")"),
+    p_lbl = if_else(p < 0.05, NA_character_, p_lbl)
+  )
+
+tabela_senna
+
+# Atenção! gráfico horroroso!
+grafico_senna <- tabela_senna %>%
+  ggplot(aes(x = variavel, y = p, fill = resposta)) +
+  geom_col(position = "stack", width = 0.6) +
+  geom_label(
+    aes(label = p_lbl),
+    position = position_stack(vjust = .5),
+    colour = "white",
+    fontface = "bold",
+    label.size = 0
+  )
+grafico_senna
+
+grafico_senna_rebuscado <- grafico_senna +
+  coord_flip() +
+  theme_minimal() +
+  theme(legend.position = "top",
+        axis.text.y = element_text(hjust = 0),
+        strip.text.y = element_text(angle = 180, hjust = 0),
+        strip.placement = "outside"
+  ) +
+  labs(fill = "Resposta:", x = "", y = "") +
+  scale_y_continuous(labels = scales::percent_format(decimal.mark = ","))+
+  ggtitle("Variáveis 'senna'") +
+  scale_fill_gradient2(high = "#CA0020",  mid = "#dddddd", low = "#0571B0", midpoint = 2.5) 
+
+ggsave(grafico_senna_rebuscado, filename = "grafico_senna_rebuscado.pdf", height = 30, width = 10)
+```

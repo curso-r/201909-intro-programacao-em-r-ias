@@ -88,3 +88,76 @@ base_ias %>%
   )
 ```
 
+
+### Gráfico 1: grafico_notas.png
+
+```{r}
+base_ias %>% 
+  ggplot(aes(x = a_m_port, y = a_m_mat)) +
+  geom_point() +
+  geom_hline(yintercept = 60, linetype = 2) +
+  geom_vline(xintercept = 60, linetype = 2) +
+  geom_smooth(se = FALSE) +
+  theme_minimal() +
+  labs(x = "Nota de português", y = "Nota de matemática")
+```
+
+
+### Gráfico 2: grafico_escores_dominio_O.png
+
+```{r}
+base_ias %>% 
+  select(starts_with("sal"),  starts_with("senna")) %>% 
+  gather(item, score) %>%
+  left_join(base_dic, by = c("item" = "coditem2")) %>% 
+  filter(domain == "O") %>% 
+  ggplot(aes(x = item, y = score)) +
+  geom_boxplot() +
+  coord_flip() +
+  theme_minimal() +
+  labs(y = "Escore", x = "")
+```
+
+### Gráfico 3
+
+```{r}
+library(scales)
+
+tabela_sal_cexp_i03_1 <- base_ias %>%
+  count(sal_cexp_i03_1) %>%
+  mutate(
+    p = n/sum(n),
+    p_lbl = percent(p, 0.1, decimal.mark = ","),
+    p_lbl = paste0(n, " (", p_lbl, ")")
+  )
+
+tabela_sal_cexp_i03_1
+
+# Gráfico feio
+grafico_sal_cexp_i03_1 <- tabela_sal_cexp_i03_1 %>%
+  ggplot(aes(x = "sal_cexp_i03_1", y = p, fill = sal_cexp_i03_1)) +
+  geom_col(position = "stack", width = 0.4) +
+  geom_label(
+    aes(label = p_lbl),
+    position = position_stack(vjust = .5),
+    colour = "white",
+    fontface = "bold",
+    label.size = 0
+  )
+
+grafico_sal_cexp_i03_1
+
+# Deixando mais bonito
+grafico_sal_cexp_i03_1 +
+  coord_flip() +
+  theme_minimal() +
+  theme(legend.position = "top",
+        axis.text.y = element_text(hjust = 0)
+  ) +
+  labs(fill = "Resposta:", x = "", y = "") +
+  scale_y_continuous(labels = scales::percent_format(decimal.mark = ",")) +
+  ggtitle("sal_cexp_i03_1") +
+  scale_fill_gradient2(high = "#CA0020",  mid = "#dddddd", low = "#0571B0", midpoint = 2.5) 
+ggsave("grafico_barras_rebuscado.png")
+```
+
