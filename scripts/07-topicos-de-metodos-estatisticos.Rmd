@@ -1,0 +1,104 @@
+---
+title: "Tópicos de Métodos Estatísticos"
+output: 
+  html_document: 
+    number_sections: yes
+    theme: paper
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Regressão linear
+
+**Propósito:** 
+
+Regressão linear é uma coleção de técnicas estatísticas para construir modelos que descrevem de maneira razoável relações entre várias variáveis explicativas e uma quantidade de interesse.
+
+**Referências:**
+
+- [leg.ufpr.br/~fernandomayer/aulas/ce074/modelos-lineares.html](http://leg.ufpr.br/~fernandomayer/aulas/ce074/modelos-lineares.html)
+
+- [www.portalaction.com.br/analise-de-regressao/regressao-linear-multipla](http://www.portalaction.com.br/analise-de-regressao/regressao-linear-multipla)
+
+- [ecologia.ib.usp.br/bie5782/doku.php?id=bie5782:03_apostila:06-modelos](http://ecologia.ib.usp.br/bie5782/doku.php?id=bie5782:03_apostila:06-modelos)
+
+- [tutorials.iq.harvard.edu/R/Rstatistics/Rstatistics.htm](https://tutorials.iq.harvard.edu/R/Rstatistics/Rstatistics.html#linear_regression)
+
+- [r-statistics.co/Linear-Regression.html](http://r-statistics.co/Linear-Regression.html)
+
+- [www.statmethods.net/stats/regression.html](https://www.statmethods.net/stats/regression.html)
+
+- [www.datacamp.com/community/tutorials/linear-regression-R](https://www.datacamp.com/community/tutorials/linear-regression-R)
+
+- [cran.r-project.org/web/packages/jtools/vignettes/summ.html](https://cran.r-project.org/web/packages/jtools/vignettes/summ.html)
+
+- [www.ime.unicamp.br/~dias/isl.pdf](https://www.ime.unicamp.br/~dias/Intoduction%20to%20Statistical%20Learning.pdf)
+
+**Pacotes de R:**
+
+```{r eval = FALSE}
+install.packages(c("stats"))
+```
+
+
+
+# Análise de correspondência
+
+**Propósito:** 
+
+"Técnica de análise multivariada adequada para dados categóricos
+que permite analisar graficamente as relações existentes através da redução de dimensionalidade do conjunto de dados. Tal técnica é aplicada a tabelas de contingência com o objetivo de determinar o grau de associação global entre suas linhas e as colunas, indicando como as variáveis estão relacionadas."
+
+Fonte: [www.ime.unicamp.br/sinape/sites/default/files/Artigo.pdf](http://www.ime.unicamp.br/sinape/sites/default/files/Artigo%20Sinape%20v2.pdf)
+
+**Referências:**
+
+- [www.sthda.com/english/articles/31-principal-component-methods-in-r-practical-guide/113-ca-correspondence-analysis-in-r-essentials/](http://www.sthda.com/english/articles/31-principal-component-methods-in-r-practical-guide/113-ca-correspondence-analysis-in-r-essentials/)
+
+- [www.statsoft.com/Textbook/Correspondence-Analysis](http://www.statsoft.com/Textbook/Correspondence-Analysis)
+
+**Pacotes de R:**
+
+```{r eval = FALSE}
+install.packages(c("MASS", "ade4", "ca", "vegan", "ExPosition", "andFactoMineR"))
+```
+
+# Análise Fatorial
+
+**Propósito:** 
+
+"Análise fatorial é um nome genérico dado a uma classe de métodos
+estatísticos multivariados cujo propósito principal é definir a estrutura subjacente
+em uma matriz de dados. Em termos gerais, a análise fatorial aborda o problema
+de analisar a estrutura das inter-ralações (correlações) entre um grande número de
+variáveis (por exemplo, escores de testes, itens de testes, respostas de
+questionários), definindo um conjunto de dimensões latentes comuns, chamados
+fatores."
+
+Fonte: [www.maxwell.vrac.puc-rio.br/8741/8741_5.PDF](https://www.maxwell.vrac.puc-rio.br/8741/8741_5.PDF)
+
+**Referências:**
+
+- [www.di.fc.ul.pt/~jpn/r/factoranalysis/factoranalysis.html](http://www.di.fc.ul.pt/~jpn/r/factoranalysis/factoranalysis.html)
+
+- [www.promptcloud.com/blog/exploratory-factor-analysis-in-r/](https://www.promptcloud.com/blog/exploratory-factor-analysis-in-r/)
+
+- [r-posts.com/exploratory-factor-analysis-in-r/](https://r-posts.com/exploratory-factor-analysis-in-r/)
+
+- [rpubs.com/ranvirkumarsah/Intro2PCA_EFA](https://rpubs.com/ranvirkumarsah/Intro2PCA_EFA)
+
+- [pdfs.semanticscholar.org/77d6/d6c8cdcbdd201e86472e2ba5924c4f4bdc1d.pdf](https://pdfs.semanticscholar.org/77d6/d6c8cdcbdd201e86472e2ba5924c4f4bdc1d.pdf)
+
+- [pareonline.net/getvn.asp?v=18&n=4](https://pareonline.net/getvn.asp?v=18&n=4)
+
+- [www.personality-project.org/r/book/Chapter6.pdf](https://www.personality-project.org/r/book/Chapter6.pdf)
+
+**Pacotes de R:**
+
+```{r eval = FALSE}
+install.packages(c("psych", "nFactors", "GPARotation", "sem", "stats"))
+```
+
