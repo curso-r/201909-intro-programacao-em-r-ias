@@ -1,0 +1,90 @@
+---
+title: "Case"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+base_ias <- read_rds("../dados/bd_exp.rds") %>% 
+  janitor::clean_names()
+```
+
+
+### Tabela 1: notas de português e matemática
+
+```{r}
+base_ias %>%
+  gather(materia, nota, a_m_port, a_m_mat) %>% 
+  group_by(turma, materia, serie) %>% 
+  summarise(
+    nota_media = mean(nota, na.rm = TRUE)
+  ) %>% 
+  ungroup() %>% 
+  mutate(nota_media = round(nota_media, 1)) %>% 
+  arrange(materia, desc(nota_media)) %>% 
+  mutate(
+    materia = ifelse(materia == "a_m_mat", "Matemática", "Português")
+  ) %>% 
+  select(
+    Turma = turma,
+    Série = serie,
+    Matéria = materia,
+    `Nota média` = nota_media
+  )
+```
+
+### Tabela 2: descritiva da nota geral ((PORT + MAT)/ 2) por turma do quinto ano
+
+```{r}
+base_ias %>% 
+  filter(serie == 5) %>% 
+  mutate(nota_geral = (a_m_mat + a_m_port) / 2) %>% 
+  group_by(turma) %>% 
+  summarise(
+    nota_geral_media = mean(nota_geral, na.rm = TRUE),
+    nota_geral_dp = sd(nota_geral, na.rm = TRUE),
+    nota_geral_min = min(nota_geral, na.rm = TRUE),
+    nota_geral_max = max(nota_geral, na.rm = TRUE),
+  ) %>% 
+  select(
+    Turma = turma,
+    `Média` = nota_geral_media,
+    `Desvio-padrão` = nota_geral_dp,
+    `Mínima` = nota_geral_min,
+    `Máxima` = nota_geral_max
+  ) %>% 
+  arrange(desc(Média))
+```
+
+
+### Tabela 3: escore médio dos itens
+
+```{r}
+base_dic <- readxl::read_excel("../dados/senna_sal_ex1.xlsx", sheet = 2) %>% 
+  mutate(
+    coditem2 = str_to_lower(coditem2),
+    coditem2 = str_replace(coditem2, "intcur", "int_cur"),
+    coditem2 = str_replace(coditem2, "crimg", "cr_img"),
+    coditem2 = str_replace(coditem2, "_n_l", "_n_l_"),
+    coditem2 = str_replace(coditem2, "angrvol", "angr_vol")
+  )
+
+base_ias %>% 
+  select(starts_with("sal"),  starts_with("senna")) %>% 
+  gather(item, score) %>% 
+  group_by(item) %>% 
+  summarise(score_medio = mean(score, na.rm = TRUE)) %>% 
+  arrange(desc(score_medio)) %>% 
+  mutate(score_medio = round(score_medio, 1)) %>% 
+  left_join(base_dic, by = c("item" = "coditem2")) %>% 
+  select(
+    Cod = item,
+    Item = item_text,
+    `Score médio` = score_medio
+  )
+```
+

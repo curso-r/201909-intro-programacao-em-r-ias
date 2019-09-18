@@ -1,0 +1,36 @@
+---
+title: "Case"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+base_ias <- read_rds("../dados/bd_exp.rds") %>% 
+  janitor::clean_names()
+```
+
+### Tabela 1: descritiva da nota geral ((PORT + MAT)/ 2) por turma do quinto ano
+
+```{r}
+
+```
+
+
+### Tabela 2: médias de português e matemática por turma
+
+
+```{r}
+
+```
+
+
+### Tabela 3: escore médio dos itens
+
+```{r}
+
+```
+
